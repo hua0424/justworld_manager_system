@@ -7,7 +7,7 @@
         </div>
         <div class="container">
             <el-table :data="tableData" border class="table">
-                <el-table-column prop="name" label="名称" sortable width="120">
+                <el-table-column prop="name" label="名称" sortable width="200">
                 </el-table-column>
                 <el-table-column prop="desc" label="描述" width="400">
                 </el-table-column>

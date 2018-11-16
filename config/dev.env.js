@@ -4,5 +4,5 @@ const prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
     NODE_ENV: '"development"',
-    BASE_URL: '"http://localhost:8080/ruleengine"'
+    BASE_URL: '"http://192.168.99.100:8080/ruleengine"'
 })
