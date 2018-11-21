@@ -79,7 +79,7 @@
         name: 'aiSmsJobList',
         data() {
             return {
-                url: process.env.BASE_URL+"/aismsjob/queryList",
+                url: "/aismsjob/queryList",
                 list: [],
                 pageNum: 1,
                 pageSize: 15,
@@ -98,12 +98,11 @@
         },
         methods: {
             getData() {
-                this.$axios.post(this.url+"/"+this.pageNum+"/"+this.pageSize,
+                this.$req.post(this.url+"/"+this.pageNum+"/"+this.pageSize,
                     {id:this.search_cond.id,phone:this.search_cond.phone}).then((res) => {
                     this.list = res.data.data.list
                     this.total = res.data.data.total
-                }).catch(error => {
-                    this.$message.success('err' + error.message)})
+                })
             },
             search() {
                 this.pageNum=1;

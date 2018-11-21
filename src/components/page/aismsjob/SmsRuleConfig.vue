@@ -83,17 +83,16 @@
 
 <script>
     import {TreeUtil} from "@/api/tree.js"
-    import querystring from 'querystring'
 
     export default {
         name: 'areaConfig',
         data() {
             return {
-                dispatcher_list_url:process.env.BASE_URL+"/smsDispatcher/queryList",
-                sms_rule_url:process.env.BASE_URL+"/aismsrule",
+                dispatcher_list_url:"/smsDispatcher/queryList",
+                sms_rule_url:"/aismsrule",
                 sms_dispatcher_list:[],
                 area: {
-                    url: process.env.BASE_URL+"/commoninfo/region/queryRegionList/2",
+                    url: "/commoninfo/region/queryRegionList/2",
                     area_tree:{},
                     area_options: [],
                     dispatchers:[""],
@@ -104,14 +103,14 @@
                     select:[]
                 },
                 operator:{
-                    url: process.env.BASE_URL+"/commoninfo/dic/getDic",
+                    url: "/commoninfo/dic/getDic",
                     options:[],
                     select:"",
                     dispatchers:[""],
                     select:[]
                 },
                 username:{
-                    url: process.env.BASE_URL+"/commoninfo/dic",
+                    url: "/commoninfo/dic",
                     search_words:"",
                     list:[{id:"1",dicName:"myai"}],
                     dispatchers:[""],
@@ -134,12 +133,10 @@
         },
         methods: {
             getAreaList() { //查询省市列表
-                this.$axios.post(this.area.url,
+                this.$req.post(this.area.url,
                     {}).then((res) => {
                     this.area.area_tree = new TreeUtil(res.data.data, "id", "parentId", null);
                     this.area.area_options = this.area.area_tree.getTree();
-                }).catch(error => {
-                    this.$message.success('err' + error.message)
                 })
             },
             addUsername() { //新增用户名
@@ -147,42 +144,33 @@
                     confirmButtonText: '提交',
                     cancelButtonText: '取消',
                 }).then(({ value }) => {
-                    this.$axios.post(this.username.url+"/addAiUsername",
+                    this.$req.post(this.username.url+"/addAiUsername",
                         {dicName:value}).then((res) => {
                         this.getUsernameList();
                         this.$message({
                             type: 'success',
                             message: '成功新增用户名: ' + value
                         });
-                    }).catch(error => {
-                        this.$message.success('请求失败:' + error.message)})
-                }).catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '取消新增用户名'
-                    });
-                });
+                    })
+                })
             },
             getUsernameList() { //查询AI用户名列表
-                this.$axios.post(this.username.url+"/getDic/AI_USERNAME",
+                this.$req.post(this.username.url+"/getDic/AI_USERNAME",
                     {}).then((res) => {
                     this.username.list = res.data.data
-                }).catch(error => {
-                    this.$message.success('err' + error.message)})
+                })
             },
             getOperatorList() { //查询运营商列表
-                this.$axios.post(this.operator.url+"/PHONE_OPERATOR",
+                this.$req.post(this.operator.url+"/PHONE_OPERATOR",
                     {}).then((res) => {
                         this.operator.options = res.data.data;
-                }).catch(error => {
-                    this.$message.success('err' + error.message)})
+                })
             },
             getSmsDispatcherList() {    //获取可用短信渠道列表
-                this.$axios.post(this.dispatcher_list_url,
+                this.$req.post(this.dispatcher_list_url,
                     {}).then((res) => {
                     this.sms_dispatcher_list = res.data.data;
-                }).catch(error => {
-                    this.$message.success('err' + error.message)})
+                })
             },
             onAreaSelectChange(val) {   //区域选择变化事件
                 if (this.area.select.length == 0) return;
@@ -199,7 +187,7 @@
                 this.changeRuleShow('AI_USERNAME',this.username.select,this.username);
             },
             changeRuleShow(ruleType,ruleKey,field){
-                this.$axios.post(this.sms_rule_url+"/queryList",
+                this.$req.post(this.sms_rule_url+"/queryList",
                     {
                         ruleType:ruleType,
                         ruleKey:ruleKey
@@ -215,8 +203,7 @@
                             })
                         }
 
-                }).catch(error => {
-                    this.$message.success('err' + error.message)})
+                })
             },
             handleAreaRuleChange(current,direction,change) { //区域规则配置变化
                 if (this.area.select.length == 0) return;
@@ -233,12 +220,11 @@
                         ruleKey:ruleKey
                     }
                 });
-                this.$axios.post(this.sms_rule_url+"/update",
+                this.$req.post(this.sms_rule_url+"/update",
                     ruleList).then((res) => {
                         console.log(JSON.stringify(res.data));
                         this.$message.success('操作成功')
-                }).catch(error => {
-                    this.$message.success('err' + error.message)})
+                })
 
             },
             handleOperatorRuleChange(current,direction,change){ //运营商规则配置变化
