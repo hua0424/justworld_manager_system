@@ -60,7 +60,7 @@
         name: 'aiSmsJobList',
         data() {
             return {
-                url: process.env.BASE_URL+"/smsTemplate",
+                url: "/smsTemplate",
                 list: [],
                 pageNum: 1,
                 pageSize: 15,
@@ -90,12 +90,11 @@
         },
         methods: {
             getData() {
-                this.$axios.post(this.url+"/queryList/"+this.pageNum+"/"+this.pageSize,
+                this.$req.post(this.url+"/queryList/"+this.pageNum+"/"+this.pageSize,
                     this.search_cond).then((res) => {
                     this.list = res.data.data.list
                     this.total = res.data.data.total
-                }).catch(error => {
-                    this.$message.success('err' + error.message)})
+                })
             },
             search() {
                 this.pageNum=1;
@@ -106,7 +105,7 @@
             },
             handleDelete(){
                 if(this.multipleSelection.length==0)return;
-                this.$axios.post(this.url+"/batchDelete",
+                this.$req.post(this.url+"/batchDelete",
                     this.multipleSelection.map(v=>{return v.id})).then((res) => {
                         if(res.data.rtcd=="0") {
                             this.$message.success('操作成功');
@@ -114,8 +113,7 @@
                             this.$message.error('操作失败:'+res.data.msg);
                         }
                     this.getData();
-                }).catch(error => {
-                    this.$message.error('err' + error.message)})
+                })
             },
             showAdd(){
                 this.dialogIndex="add";
@@ -137,15 +135,13 @@
                 if("edit" == this.dialogIndex){
                     url = this.url+"/update";
                 }
-                this.$axios.post(url,this.form).then((res) => {
+                this.$req.post(url,this.form).then((res) => {
                     if(res.data.rtcd=="0") {
                         this.$message.success('操作成功');
                         this.getData();
                     } else {
                         this.$message.error('操作失败:'+res.data.msg);
                     }
-                }).catch(error => {
-                    this.$message.error('err' + error.message)
                 }).finally(()=>{
                     this.editVisible = false;
                     for (let formKey in this.form) {

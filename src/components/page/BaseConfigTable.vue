@@ -41,7 +41,7 @@
         name: 'BaseConfigTable',
         data() {
             return {
-                url: process.env.BASE_URL+"/sysconfig/queryList",
+                url: "/sysconfig/queryList",
                 tableData: [],
                 cfgGroup: ''
             }
@@ -51,15 +51,13 @@
         },
         methods: {
             getData() {
-                this.$axios.post(this.url, querystring.stringify({cfgGroup: this.cfgGroup})).then((res) => {
+                this.$req.post(this.url, querystring.stringify({cfgGroup: this.cfgGroup})).then((res) => {
                     this.tableData = res.data.data.map(v => {
                         v.edit=false
                         v.originalcfgValue = v.cfgValue
                         return v
                     })
-                }).catch(error => {
-                    console.log(error);
-                    this.$message.success('err' + error.message)})
+                })
             },
             cancelEdit(row) {
                 row.cfgValue = row.originalcfgValue
@@ -74,7 +72,7 @@
                 row.originalcfgValue = row.cfgValue
             },
             confirmEdit(index,row) {
-                this.$axios.post(process.env.BASE_URL+"/sysconfig/saveBaseCfgValue",this.tableData[index])
+                this.$req.post("/sysconfig/saveBaseCfgValue",this.tableData[index])
                     .then((res)=>{
                         if(res.data.rtcd == '0'){
                             row.edit = false
