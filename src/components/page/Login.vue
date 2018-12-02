@@ -47,9 +47,9 @@
                     if (valid) {
                         // localStorage.setItem('ms_username',this.ruleForm.username);
                         this.$req.post("/auth/login", querystring.stringify(this.ruleForm)).then((res) => {
-                            console.log(res.data);
+                            console.log(res.headers.authorization);
                             //保存token
-                            localStorage.setItem('_login_token_', res.data.data);
+                            localStorage.setItem('_login_token_', res.headers.authorization);
                             this.$router.push('/');
                         });
                     } else {

@@ -46,29 +46,12 @@ axios.interceptors.response.use(
     response => {
         const res = response.data;
         if (res.rtcd != null && res.rtcd != "0") {
-            // 没有登录
-            if (res.rtcd === "401") {
-                MessageBox.confirm('你尚未登录或已被登出，可以取消继续留在该页面，或者重新登录', '确定登出', {
-                    confirmButtonText: '重新登录',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    router.push('/login');
-                    // location.reload() // 为了重新实例化vue-router对象 避免bug
-                })
-            } else if (res.rtcd === "403") {
-                Message({
-                    message: '你没有执行此操作所需要的权限，请联系管理员授权',
-                    type: 'warning',
-                    duration: 5 * 1000
-                })
-            } else {
-                Message({
-                    message: res.msg,
-                    type: 'error',
-                    duration: 5 * 1000
-                })
-            }
+            Message({
+                message: '操作失败:'+res.data.msg,
+                type: 'warning',
+                duration: 5 * 1000
+            })
+
             return Promise.reject('error')
         } else {
             return response
@@ -78,44 +61,51 @@ axios.interceptors.response.use(
         console.log('请求出错' + error) // for debug
         if (error && error.response) {
             switch (error.response.status) {
-                case 400:
-                    error.message = '错误请求'
-                    break;
                 case 401:
-                    error.message = '未授权，请重新登录'
-                    break;
+                    MessageBox.confirm('你尚未登录或已被登出，可以取消继续留在该页面，或者重新登录', '确定登出', {
+                        confirmButtonText: '重新登录',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        router.push('/login');
+                    })
+                    return Promise.reject(error);
+                case 400:
+                    error.message = '登录失败，用户名/密码不正确'
+                    break
                 case 403:
-                    error.message = '拒绝访问'
-                    break;
+                    error.message = '您没有访问此操作的权限';
+                    break
                 case 404:
                     error.message = '请求错误,未找到该资源'
-                    break;
+                    break
                 case 405:
                     error.message = '请求方法未允许'
-                    break;
+                    break
                 case 408:
                     error.message = '请求超时'
-                    break;
+                    break
                 case 500:
                     error.message = '服务器端出错'
-                    break;
+                    break
                 case 501:
                     error.message = '网络未实现'
-                    break;
+                    break
                 case 502:
                     error.message = '网络错误'
-                    break;
+                    break
                 case 503:
                     error.message = '服务不可用'
-                    break;
+                    break
                 case 504:
                     error.message = '网络超时'
-                    break;
+                    break
                 case 505:
                     error.message = 'http版本不支持该请求'
-                    break;
+                    break
                 default:
-                    error.message = `连接错误${error.response.status}`
+                    error.message = '连接错误'+error.response.status
+                    break;
             }
         } else {
             error.message = "连接到服务器失败"
